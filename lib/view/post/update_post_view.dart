@@ -4,35 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:widget_testing/model/post.dart';
 import 'package:widget_testing/repository/post_repository.dart';
 
-class CreatePostView extends StatefulWidget {
+class UpdatePostView extends StatefulWidget {
   final PostRepository postRepository;
-  const CreatePostView({super.key, required this.postRepository});
+  const UpdatePostView({super.key, required this.postRepository});
 
   @override
-  _CreatePostViewState createState() => _CreatePostViewState();
+  _UpdatePostViewState createState() => _UpdatePostViewState();
 }
 
-class _CreatePostViewState extends State<CreatePostView> {
+class _UpdatePostViewState extends State<UpdatePostView> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
   String message = '';
   String title = '';
   String body = '';
 
-  // Function to create post when button is clicked
-  void createPost() async {
+  // Function to update post when button is clicked
+  void updatePost() async {
     try {
       setState(() {
         widget.postRepository.setIsLoading(true);
       });
-      Post? post = await widget.postRepository.createPost(
+      Post? post = await widget.postRepository.updatePost(
         titleController.text,
         bodyController.text,
       );
       if (post != null) {
         setState(() {
           widget.postRepository.setIsLoading(false);
-          message = 'Post created with ID: ${post.id}';
+          message = 'Post updated with ID: ${post.id}';
           title = post.title!;
           body = post.body!;
         });
@@ -54,7 +54,7 @@ class _CreatePostViewState extends State<CreatePostView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Post')),
+      appBar: AppBar(title: const Text('Update Post')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -91,10 +91,10 @@ class _CreatePostViewState extends State<CreatePostView> {
                   : ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          createPost();
+                          updatePost();
                         }
                       },
-                      child: const Text('Create Post'),
+                      child: const Text('Update Post'),
                     ),
               const SizedBox(height: 20),
               Text(message), // Show the message after post creation

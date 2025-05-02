@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:widget_testing/model/post.dart';
 import 'package:widget_testing/repository/post_repository.dart';
 
-class CreatePostView extends StatefulWidget {
+class PatchPostView extends StatefulWidget {
   final PostRepository postRepository;
-  const CreatePostView({super.key, required this.postRepository});
+  const PatchPostView({super.key, required this.postRepository});
 
   @override
-  _CreatePostViewState createState() => _CreatePostViewState();
+  _PatchPostViewState createState() => _PatchPostViewState();
 }
 
-class _CreatePostViewState extends State<CreatePostView> {
+class _PatchPostViewState extends State<PatchPostView> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
   String message = '';
@@ -20,19 +20,19 @@ class _CreatePostViewState extends State<CreatePostView> {
   String body = '';
 
   // Function to create post when button is clicked
-  void createPost() async {
+  void patchPost() async {
     try {
       setState(() {
         widget.postRepository.setIsLoading(true);
       });
-      Post? post = await widget.postRepository.createPost(
+      Post? post = await widget.postRepository.patchPost(
         titleController.text,
         bodyController.text,
       );
       if (post != null) {
         setState(() {
           widget.postRepository.setIsLoading(false);
-          message = 'Post created with ID: ${post.id}';
+          message = 'Post patched with ID: ${post.id}';
           title = post.title!;
           body = post.body!;
         });
@@ -78,12 +78,6 @@ class _CreatePostViewState extends State<CreatePostView> {
                 controller: bodyController,
                 key: const Key("bodyTextFormField"),
                 decoration: const InputDecoration(labelText: 'Post Body'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Body is required';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 20),
               widget.postRepository.isLoading
@@ -91,10 +85,10 @@ class _CreatePostViewState extends State<CreatePostView> {
                   : ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          createPost();
+                          patchPost();
                         }
                       },
-                      child: const Text('Create Post'),
+                      child: const Text('Patch Post'),
                     ),
               const SizedBox(height: 20),
               Text(message), // Show the message after post creation

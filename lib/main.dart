@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:widget_testing/repository/post_repository.dart';
-import 'package:widget_testing/view/post/create_post_view.dart';
-import 'package:widget_testing/view/post/get_posts_view.dart';
-import 'package:widget_testing/view/todo_list_view.dart';
 import 'package:http/http.dart' as http;
+import 'package:widget_testing/view/post/delete_post_view.dart';
+import 'package:widget_testing/view/post/patch_post_view.dart';
+import 'package:widget_testing/view/post/update_post_view.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,7 +31,10 @@ class MyApp extends StatelessWidget {
       // home: const NameInputView(),
       // home: const TodoListView(),
       // home: PostView(postRepository: postRepository),
-      home: CreatePostView(postRepository: postRepository),
+      // home: CreatePostView(postRepository: postRepository),
+      // home: UpdatePostView(postRepository: postRepository),
+      // home: PatchPostView(postRepository: postRepository),
+      home: DeletePostView(postRepository: postRepository),
     );
   }
 }
