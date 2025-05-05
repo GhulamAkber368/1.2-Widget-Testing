@@ -4,11 +4,11 @@ import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:widget_testing/repository/post_repository.dart';
 import 'package:widget_testing/utils/app_urls.dart';
-import 'package:widget_testing/view/post/create_post_view.dart';
-import 'package:widget_testing/view/post/delete_post_view.dart';
-import 'package:widget_testing/view/post/get_posts_view.dart';
-import 'package:widget_testing/view/post/patch_post_view.dart';
-import 'package:widget_testing/view/post/update_post_view.dart';
+import 'package:widget_testing/view/post/APIs/create_post_view.dart';
+import 'package:widget_testing/view/post/APIs/delete_post_view.dart';
+import 'package:widget_testing/view/post/APIs/get_posts_view.dart';
+import 'package:widget_testing/view/post/APIs/patch_post_view.dart';
+import 'package:widget_testing/view/post/APIs/update_post_view.dart';
 
 class MockHttpClient extends Mock implements Client {}
 

@@ -1,19 +1,46 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:widget_testing/firebase_options.dart';
+import 'package:widget_testing/repository/post_firebase_repository.dart';
 import 'package:widget_testing/repository/post_repository.dart';
 import 'package:http/http.dart' as http;
-import 'package:widget_testing/view/post/delete_post_view.dart';
-import 'package:widget_testing/view/post/patch_post_view.dart';
-import 'package:widget_testing/view/post/update_post_view.dart';
+import 'package:widget_testing/view/post/APIs/delete_post_view.dart';
+import 'package:widget_testing/view/post/APIs/patch_post_view.dart';
+import 'package:widget_testing/view/post/APIs/update_post_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/create_post_f.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   final PostRepository postRepository = PostRepository(http.Client());
+
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+  late final PostFirebaseRepository postFirebaseRepository;
+  // =
+  //     PostFirebaseRepository(firebaseFirestore);
+
+  @override
+  void initState() {
+    super.initState();
+    postFirebaseRepository = PostFirebaseRepository(firebaseFirestore);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,7 +61,10 @@ class MyApp extends StatelessWidget {
       // home: CreatePostView(postRepository: postRepository),
       // home: UpdatePostView(postRepository: postRepository),
       // home: PatchPostView(postRepository: postRepository),
-      home: DeletePostView(postRepository: postRepository),
+      // home: DeletePostView(postRepository: postRepository),
+      home: CreatePostFView(
+        postFirebaseRepository: postFirebaseRepository,
+      ),
     );
   }
 }
