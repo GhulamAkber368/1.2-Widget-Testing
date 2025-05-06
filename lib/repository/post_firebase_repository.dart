@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:widget_testing/model/post.dart';
 
 class PostFirebaseRepository {
@@ -20,7 +21,22 @@ class PostFirebaseRepository {
       await postCollection.doc(id).set(post.toJson());
       return "Post Created";
     } on FirebaseException {
-      return "Firebase Exception ";
+      return "Firebase Exception";
+    } catch (e) {
+      return "Exception";
+    }
+  }
+
+  Future<String> getPost(Post post, String id) async {
+    try {
+      DocumentSnapshot documentSnapshot = await postCollection.doc(id).get();
+      if (documentSnapshot.exists) {
+        return "Post Exists";
+      } else {
+        return "Post not Exists";
+      }
+    } on FirebaseException {
+      return "Firebase Exception";
     } catch (e) {
       return "Exception";
     }

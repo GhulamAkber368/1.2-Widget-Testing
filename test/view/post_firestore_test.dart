@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -6,6 +7,9 @@ import 'package:widget_testing/repository/post_firebase_repository.dart';
 import 'package:widget_testing/view/post/firestore_crud/create_post_f.dart';
 
 // In unit tests we mock FirebaseFirestore (collections, docs, queries) to verify repository logic; in widget tests we mock the repository itself to focus solely on UI behavior.
+// We're injecting a mock repository, so real FirebaseFirestore is never used.
+// The mock overrides methods like setPost, so no actual Firestore code runs during tests.
+
 class MockPostFirebaseRespository extends Mock
     implements PostFirebaseRepository {}
 
@@ -13,6 +17,9 @@ class FakePost extends Fake implements Post {}
 
 late MockPostFirebaseRespository mockPostFirebaseRespository;
 void main() {
+// What it does: Runs once before all tests.
+// Why registerFallbackValue: It tells mocktail “If you see any<Post>(), you can use this FakePost() instance under the hood.” Without this, matching Post arguments would crash due to null-safety.
+// In simple terms: We register our dummy Post so our mocks can accept any Post without blowing up.
   setUpAll(() {
     registerFallbackValue(FakePost());
   });
@@ -20,28 +27,127 @@ void main() {
     mockPostFirebaseRespository = MockPostFirebaseRespository();
   });
 
-  testWidgets("Post Firebase", (tester) async {
-    when(() => mockPostFirebaseRespository.isLoading).thenReturn(false);
-    when(() => mockPostFirebaseRespository.setPost(any(), any()))
-        .thenAnswer((ans) async {
-      return "Post Created";
+  group("Set Post", () {
+    testWidgets(
+        "given Post Firebase Repository Class when setPost Func is called and Post is created then Post Created message should be display",
+        (tester) async {
+      // We're returning isLoading = false in the test stub because in your UI code, this line controls whether the loading spinner shows or not:
+      // If we don't return false, it might default to null, which causes a type error or shows the wrong widget.
+      // Same for isLoading to true
+      // As we are mocking therefore isLoading of PostFirebaseRepository will also never use. Therefore we are using new isLoadingTest variable here and returning new isLoadingTest whenever we need isLoading.
+
+      bool isLoadingTest = false;
+      when(() => mockPostFirebaseRespository.isLoading)
+          .thenAnswer((ans) => isLoadingTest);
+      when(() => mockPostFirebaseRespository.setPost(any(), any()))
+          .thenAnswer((ans) async {
+        isLoadingTest = true;
+        await Future.delayed(const Duration(milliseconds: 100));
+        isLoadingTest = false;
+        return "Post Created";
+      });
+
+      await tester.pumpWidget(MaterialApp(
+        home: CreatePostFView(
+            postFirebaseRepository: mockPostFirebaseRespository),
+      ));
+
+      final titleTextField = find.byKey(const Key("postTextFormField"));
+      final bodyTextField = find.byKey(const Key("bodyTextFormField"));
+
+      await tester.enterText(titleTextField, "Title");
+      await tester.enterText(bodyTextField, "Body");
+
+      final btn = find.byType(ElevatedButton);
+      await tester.tap(btn);
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text("Post Created"), findsOneWidget);
     });
 
-    await tester.pumpWidget(MaterialApp(
-      home:
-          CreatePostFView(postFirebaseRepository: mockPostFirebaseRespository),
-    ));
+    testWidgets(
+        "given Post Repository Class when setPost Func is called and Firebase Exception occur then Firebase Exception message should be display.",
+        (tester) async {
+      bool isLoadingTest = false;
+      when(() => mockPostFirebaseRespository.isLoading)
+          .thenAnswer((ans) => isLoadingTest);
+      // As this is Widget Testing, Therefore we are returing String "Firebase Exception" not the Exception. Exception cases should be tested in Unit Tests.
+      when(() => mockPostFirebaseRespository.setPost(any(), any()))
+          .thenAnswer((ans) async {
+        isLoadingTest = true;
+        await Future.delayed(const Duration(milliseconds: 100));
+        isLoadingTest = false;
+        return "Firebase Exception";
+      });
 
-    final titleTextField = find.byKey(const Key("postTextFormField"));
-    final bodyTextField = find.byKey(const Key("bodyTextFormField"));
+      await tester.pumpWidget(MaterialApp(
+        home: CreatePostFView(
+            postFirebaseRepository: mockPostFirebaseRespository),
+      ));
 
-    await tester.enterText(titleTextField, "Title");
-    await tester.enterText(bodyTextField, "Body");
-    final btn = find.byType(ElevatedButton);
-    await tester.tap(btn);
+      final titleTextField = find.byKey(const Key("postTextFormField"));
+      final bodyTextField = find.byKey(const Key("bodyTextFormField"));
 
-    await tester.pump();
+      await tester.enterText(titleTextField, "Title");
+      await tester.enterText(bodyTextField, "Body");
 
-    expect(find.text("Post Created"), findsOneWidget);
+      expect(find.text("Title"), findsOneWidget);
+
+      final btn = find.byType(ElevatedButton);
+      await tester.tap(btn);
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text("Firebase Exception"), findsOneWidget);
+    });
+
+    testWidgets(
+        "given Post Repository Class when setPost Func is called and Exception occur then \"Exception\" message should be display.",
+        (tester) async {
+      bool isLoadingTest = false;
+      when(() => mockPostFirebaseRespository.isLoading)
+          .thenAnswer((ans) => isLoadingTest);
+      // As this is Widget Testing, Therefore we are returing String "Firebase Exception" not the Exception. Exception cases should be tested in Unit Tests.
+      when(() => mockPostFirebaseRespository.setPost(any(), any()))
+          .thenAnswer((ans) async {
+        isLoadingTest = true;
+        await Future.delayed(const Duration(milliseconds: 100));
+        isLoadingTest = false;
+        return "Exception";
+      });
+
+      await tester.pumpWidget(MaterialApp(
+        home: CreatePostFView(
+            postFirebaseRepository: mockPostFirebaseRespository),
+      ));
+
+      final titleTextField = find.byKey(const Key("postTextFormField"));
+      final bodyTextField = find.byKey(const Key("bodyTextFormField"));
+
+      await tester.enterText(titleTextField, "Title");
+      await tester.enterText(bodyTextField, "Body");
+
+      expect(find.text("Title"), findsOneWidget);
+
+      final btn = find.byType(ElevatedButton);
+      await tester.tap(btn);
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text("Exception"), findsOneWidget);
+    });
   });
 }
