@@ -8,7 +8,11 @@ import 'package:http/http.dart' as http;
 import 'package:widget_testing/view/post/APIs/delete_post_view.dart';
 import 'package:widget_testing/view/post/APIs/patch_post_view.dart';
 import 'package:widget_testing/view/post/APIs/update_post_view.dart';
-import 'package:widget_testing/view/post/firestore_crud/create_post_f.dart';
+import 'package:widget_testing/view/post/firestore_crud/create_post_f_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/delete_post_f_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/get_post_f_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/get_posts_f_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/update_post_f_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,9 +66,14 @@ class _MyAppState extends State<MyApp> {
       // home: UpdatePostView(postRepository: postRepository),
       // home: PatchPostView(postRepository: postRepository),
       // home: DeletePostView(postRepository: postRepository),
-      home: CreatePostFView(
-        postFirebaseRepository: postFirebaseRepository,
-      ),
+      // home: CreatePostFView(
+      //   postFirebaseRepository: postFirebaseRepository,
+      // ),
+      // home: GetPostView(postRepository: postRepository),
+      // home: GetPostFView(postFirebaseRepository: postFirebaseRepository),
+      // home: UpdatePostFView(postFirebaseRepository: postFirebaseRepository),
+      // home: DeletePostFView(postFirebaseRepository: postFirebaseRepository),
+      home: GetPostsFView(postFirebaseRepository: postFirebaseRepository),
     );
   }
 }

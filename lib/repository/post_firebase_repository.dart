@@ -27,18 +27,52 @@ class PostFirebaseRepository {
     }
   }
 
-  Future<String> getPost(Post post, String id) async {
+  Future<Post?> getPost(String id) async {
     try {
       DocumentSnapshot documentSnapshot = await postCollection.doc(id).get();
       if (documentSnapshot.exists) {
-        return "Post Exists";
-      } else {
-        return "Post not Exists";
+        return Post.fromJson(documentSnapshot.data() as Map<String, dynamic>);
       }
+      return Post();
+    } on FirebaseException {
+      throw FirebaseException(plugin: "firestore");
+    } catch (e) {
+      throw Exception("Exception");
+    }
+  }
+
+  Future<String> updatePost(Post post, String id) async {
+    try {
+      await postCollection.doc(id).update(post.toJson());
+      return "Post Updated";
     } on FirebaseException {
       return "Firebase Exception";
     } catch (e) {
       return "Exception";
+    }
+  }
+
+  Future<String> deletePost(String id) async {
+    try {
+      await postCollection.doc(id).delete();
+      return "Post Deleted";
+    } on FirebaseException {
+      return "Firebase Exception";
+    } catch (e) {
+      return "Exception";
+    }
+  }
+
+  Future<List<Post>> getPosts() async {
+    try {
+      QuerySnapshot querySnapshot = await postCollection.get();
+      return querySnapshot.docs
+          .map((e) => Post.fromJson(e.data() as Map<String, dynamic>))
+          .toList();
+    } on FirebaseException {
+      throw FirebaseException(plugin: "firestore");
+    } catch (e) {
+      throw Exception();
     }
   }
 }

@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:widget_testing/model/post.dart';
 import 'package:widget_testing/repository/post_firebase_repository.dart';
 
-class CreatePostFView extends StatefulWidget {
+class UpdatePostFView extends StatefulWidget {
   final PostFirebaseRepository postFirebaseRepository;
-  const CreatePostFView({super.key, required this.postFirebaseRepository});
+  const UpdatePostFView({super.key, required this.postFirebaseRepository});
 
   @override
-  _CreatePostFViewState createState() => _CreatePostFViewState();
+  _UpdatePostFViewState createState() => _UpdatePostFViewState();
 }
 
-class _CreatePostFViewState extends State<CreatePostFView> {
+class _UpdatePostFViewState extends State<UpdatePostFView> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
   String message = '';
@@ -21,7 +21,7 @@ class _CreatePostFViewState extends State<CreatePostFView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Post')),
+      appBar: AppBar(title: const Text('Update Post')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -69,14 +69,14 @@ class _CreatePostFViewState extends State<CreatePostFView> {
                               body: bodyController.text.trim());
 
                           message = await widget.postFirebaseRepository
-                              .setPost(post, post.id.toString());
+                              .updatePost(post, post.id.toString());
 
                           setState(() {
                             widget.postFirebaseRepository.setIsLoading(false);
                           });
                         }
                       },
-                      child: const Text('Create Post'),
+                      child: const Text('Update Post'),
                     ),
               const SizedBox(height: 20),
               Text(message),
