@@ -75,4 +75,15 @@ class PostFirebaseRepository {
       throw Exception();
     }
   }
+
+  Future<String> deletePosts(String id) async {
+    try {
+      await postCollection.doc(id).delete();
+      return "Posts Deleted";
+    } on FirebaseException {
+      return "Firebase Exception";
+    } catch (e) {
+      return "Exception";
+    }
+  }
 }

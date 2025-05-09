@@ -468,5 +468,51 @@ void main() {
       expect(find.byKey(const Key("body_0")), findsOneWidget);
       expect(find.byKey(const Key("body_1")), findsOneWidget);
     });
+
+    testWidgets(
+        "given Post Firebase Repository Class when getPosts Func is called and Firebase Exception occur then Something went Wrong msg should display.",
+        (tester) async {
+      when(() => mockPostFirebaseRespository.getPosts())
+          .thenAnswer((ans) async {
+        await Future.delayed(const Duration(milliseconds: 100));
+        throw FirebaseException(plugin: "firestore");
+      });
+
+      await tester.pumpWidget(MaterialApp(
+        home:
+            GetPostsFView(postFirebaseRepository: mockPostFirebaseRespository),
+      ));
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text("Something went Wrong"), findsOneWidget);
+    });
+
+    testWidgets(
+        "given Post Firebase Repository Class when getPosts Func is called and generic Exception occur then Something went Wrong msg should display.",
+        (tester) async {
+      when(() => mockPostFirebaseRespository.getPosts())
+          .thenAnswer((ans) async {
+        await Future.delayed(const Duration(milliseconds: 100));
+        throw Exception();
+      });
+
+      await tester.pumpWidget(MaterialApp(
+        home:
+            GetPostsFView(postFirebaseRepository: mockPostFirebaseRespository),
+      ));
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text("Something went Wrong"), findsOneWidget);
+    });
   });
 }
