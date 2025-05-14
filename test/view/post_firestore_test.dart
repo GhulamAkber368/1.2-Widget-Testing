@@ -7,6 +7,7 @@ import 'package:widget_testing/repository/post_firebase_repository.dart';
 import 'package:widget_testing/repository/post_repository.dart';
 import 'package:widget_testing/view/post/firestore_crud/create_post_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/delete_post_f_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/delete_posts_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/get_post_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/get_posts_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/update_post_f_view.dart';
@@ -513,6 +514,66 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text("Something went Wrong"), findsOneWidget);
+    });
+  });
+
+  group("Delete Posts Test", () {
+    testWidgets(
+        "given Post Firebase Repository Class when deletePosts Func is called then Post Deleted msg should display",
+        (tester) async {
+      bool isLoadingTest = false;
+      List<Post> posts = [];
+      when(() => mockPostFirebaseRespository.isLoading)
+          .thenAnswer((ans) => isLoadingTest);
+      Post post1 = Post(id: 1, userId: 1, title: "Title 1", body: "Body 1");
+      Post post2 = Post(id: 2, userId: 2, title: "Title 2", body: "Body 2");
+      posts.addAll([post1, post2]);
+      when(() => mockPostFirebaseRespository.getPosts())
+          .thenAnswer((ans) async {
+        isLoadingTest = true;
+        await Future.delayed(const Duration(milliseconds: 100));
+        isLoadingTest = false;
+        return [post1, post2];
+      });
+
+      when(() => mockPostFirebaseRespository.deletePosts(any()))
+          .thenAnswer((ans) async {
+        isLoadingTest = true;
+        posts.removeLast();
+        await Future.delayed(const Duration(milliseconds: 100));
+        isLoadingTest = false;
+        return "Posts Deleted";
+      });
+
+      await tester.pumpWidget(MaterialApp(
+        home: DeletePostsFView(
+            postFirebaseRepository: mockPostFirebaseRespository),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key("title_0")), findsOneWidget);
+      expect(find.byKey(const Key("title_1")), findsOneWidget);
+      expect(find.byKey(const Key("body_0")), findsOneWidget);
+      expect(find.byKey(const Key("body_1")), findsOneWidget);
+
+      final btn = find.byKey(const Key("btn_1"));
+
+      await tester.tap(btn);
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNWidgets(2));
+
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key("title_0")), findsOneWidget);
+      // expect(find.byKey(const Key("title_1")), findsOneWidget);
+      expect(find.byKey(const Key("title_1")), findsNothing);
+      // expect(find.byKey(const Key("body_0")), findsOneWidget);
+      // expect(find.byKey(const Key("body_1")), findsOneWidget);
     });
   });
 }

@@ -78,11 +78,15 @@ class PostFirebaseRepository {
 
   Future<String> deletePosts(String id) async {
     try {
+      _isLoading = true;
       await postCollection.doc(id).delete();
+      _isLoading = false;
       return "Posts Deleted";
     } on FirebaseException {
+      _isLoading = false;
       return "Firebase Exception";
     } catch (e) {
+      _isLoading = false;
       return "Exception";
     }
   }

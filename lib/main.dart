@@ -10,6 +10,7 @@ import 'package:widget_testing/view/post/APIs/patch_post_view.dart';
 import 'package:widget_testing/view/post/APIs/update_post_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/create_post_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/delete_post_f_view.dart';
+import 'package:widget_testing/view/post/firestore_crud/delete_posts_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/get_post_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/get_posts_f_view.dart';
 import 'package:widget_testing/view/post/firestore_crud/update_post_f_view.dart';
@@ -73,7 +74,7 @@ class _MyAppState extends State<MyApp> {
       // home: GetPostFView(postFirebaseRepository: postFirebaseRepository),
       // home: UpdatePostFView(postFirebaseRepository: postFirebaseRepository),
       // home: DeletePostFView(postFirebaseRepository: postFirebaseRepository),
-      home: GetPostsFView(postFirebaseRepository: postFirebaseRepository),
+      home: DeletePostsFView(postFirebaseRepository: postFirebaseRepository),
     );
   }
 }

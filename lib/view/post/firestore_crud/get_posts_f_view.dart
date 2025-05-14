@@ -43,26 +43,17 @@ class _GetPostsFViewState extends State<GetPostsFView> {
                           itemCount: posts.length,
                           itemBuilder: (cxt, i) {
                             Post post = posts[i];
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            return Column(
                               children: [
-                                Column(
-                                  children: [
-                                    Text("Title: ${post.title}",
-                                        key: Key("title_$i")),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Body: ${post.body}",
-                                        key: Key("body_$i")),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
+                                Text("Title: ${post.title}",
+                                    key: Key("title_$i")),
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                                ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text("Delete"))
+                                Text("Body: ${post.body}", key: Key("body_$i")),
+                                const SizedBox(
+                                  height: 10,
+                                ),
                               ],
                             );
                           });
