@@ -533,7 +533,7 @@ void main() {
         isLoadingTest = true;
         await Future.delayed(const Duration(milliseconds: 100));
         isLoadingTest = false;
-        return [post1, post2];
+        return posts;
       });
 
       when(() => mockPostFirebaseRespository.deletePosts(any()))
@@ -565,15 +565,14 @@ void main() {
 
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsNWidgets(2));
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key("title_0")), findsOneWidget);
-      // expect(find.byKey(const Key("title_1")), findsOneWidget);
       expect(find.byKey(const Key("title_1")), findsNothing);
-      // expect(find.byKey(const Key("body_0")), findsOneWidget);
-      // expect(find.byKey(const Key("body_1")), findsOneWidget);
+      expect(find.byKey(const Key("body_0")), findsOneWidget);
+      expect(find.byKey(const Key("body_1")), findsNothing);
     });
   });
 }
